@@ -1,0 +1,47 @@
+{
+  "version": 1,
+  "coordinateSystem": "normalized",
+  "reference": "game-camera",
+  "settings": {
+    "hitMode": "body",
+    "hitRadius": 0.09,
+    "itemScale": 1,
+    "maxActiveItems": 2,
+    "startMode": "hand",
+    "startHand": "either",
+    "holdSeconds": 2,
+    "showBodyLines": false
+  },
+  "zones": [
+    {
+      "id": "Z1",
+      "x": 0.07117,
+      "y": 0.67134
+    },
+    {
+      "id": "Z2",
+      "x": 0.21566,
+      "y": 0.39429
+    },
+    {
+      "id": "Z3",
+      "x": 0.89684,
+      "y": 0.71017
+    },
+    {
+      "id": "Z4",
+      "x": 0.70596,
+      "y": 0.22643
+    },
+    {
+      "id": "Z5",
+      "x": 0.81481,
+      "y": 0.47362
+    },
+    {
+      "id": "Z6",
+      "x": 0.3273,
+      "y": 0.14907
+    }
+  ]
+}
