@@ -1,0 +1,262 @@
+<!doctype html>
+<html lang="th">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Smooth Stomp — Hand Start Prototype</title>
+  <link rel="stylesheet" href="styles.css">
+  <link rel="stylesheet" href="theme.css">
+</head>
+<body>
+<main id="app">
+
+  <!-- Permission gate (not counted as a game page) -->
+  <section id="setup" class="setup">
+    <div class="setup-card">
+      <img src="assets/smooth_stomp_logo.webp" alt="Smooth Stomp">
+      <h1>เปิดกล้องเพื่อเริ่มระบบ</h1>
+      <p id="setupInstructions">ยกมือให้สูงกว่าไหล่ แล้วค้างไว้ 2 วินาที</p>
+      <button id="enableCamera">เปิด Webcam</button>
+      <button id="openSetupConfig" type="button">⚙ ตั้งค่าหน้าแรก</button>
+      <div id="setupStatus">กำลังโหลดระบบตรวจจับท่าทาง...</div>
+    </div>
+  </section>
+
+  <!-- PAGE 1 -->
+  <section id="pageAttract" class="page active">
+    <div class="ambient"></div>
+
+    <div class="camera-hole">
+      <video id="camera" autoplay playsinline muted></video>
+      <canvas id="poseCanvas"></canvas>
+      <div id="cameraMessage" class="camera-message">กำลังเปิดกล้อง...</div>
+    </div>
+
+    <img class="overlay-art" src="assets/attract_overlay.webp" alt="Smooth Stomp UI">
+
+    <div class="body-gate glass">
+      <div class="body-gate-head">
+        <span id="bodyGateState">กำลังตรวจจับผู้เล่นครึ่งตัว</span>
+        <strong id="bodyGatePercent">0%</strong>
+      </div>
+      <div class="body-progress"><i id="bodyProgress"></i></div>
+      <small id="bodyHint">กรุณายืนให้เห็นตั้งแต่ศีรษะลงมาถึงช่วงเอว</small>
+    </div>
+
+    <div id="gesturePanel" class="gesture-panel hidden">
+      <div class="gesture-ring" id="gestureRing">
+        <div class="gesture-inner">
+          <div class="hand">✋</div>
+          <strong id="gesturePercent">0%</strong>
+        </div>
+      </div>
+      <div class="gesture-copy">
+        <span id="gestureState">ผู้เล่นพร้อมแล้ว</span>
+        <b id="startInstructions">ยกมือให้สูงกว่าไหล่ แล้วค้างไว้ 2 วินาที</b>
+      </div>
+    </div>
+
+    <button id="openAttractConfig" class="config-open" type="button">⚙ CONFIG</button>
+    <aside class="registration-qr" aria-label="QR ลงทะเบียน"><img id="registrationQR" src="assets/registration-qr.svg" alt="QR ลงทะเบียน"></aside>
+    <div class="debug-pill" id="debugText">POSE: loading</div>
+  </section>
+
+  <!-- PAGE 2 -->
+  <section id="pageReady" class="page ready-page">
+    <div class="ready-bg"></div>
+    <img class="ready-logo" src="assets/smooth_stomp_logo.webp" alt="Smooth Stomp">
+    <div class="countdown-wrap">
+      <div id="countdown" class="countdown">3</div>
+      <div id="countdownLabel" class="countdown-label">GET READY</div>
+    </div>
+    <div id="readyFoot" class="ready-foot">HAND DETECTED • PLAYER READY</div>
+  </section>
+
+
+  <!-- PAGE 3 -->
+  <section id="pageGame" class="page game-page">
+    <div class="game-ambient"></div>
+
+    <div class="game-hud hud-time">
+      <small>TIME</small>
+      <strong id="gameTime">00:40</strong>
+    </div>
+
+    <img class="game-title-logo" src="assets/smooth_stomp_logo.webp" alt="Smooth Stomp">
+
+    <div class="game-hud hud-score">
+      <small>SCORE</small>
+      <strong id="gameScore">0</strong>
+    </div>
+
+    <div id="gameCamera" class="game-camera">
+      <video id="gameVideo" autoplay playsinline muted></video>
+      <canvas id="gamePoseCanvas"></canvas>
+      <div id="spawnLayer"></div>
+      <div id="fxLayer"></div>
+    </div>
+
+    <div class="step-hint">👣 <span>STEP TO COLLECT</span></div>
+
+    <div class="legend-mini">
+      <div><img src="assets/diamond.webp"><span>+50</span></div>
+      <div><img src="assets/star.webp"><span>+300</span></div>
+      <div><img src="assets/red_gem.webp"><span>-100</span></div>
+    </div>
+
+
+    <button id="openZoneConfig" class="config-open" type="button">⚙ CONFIG</button>
+    <div id="gameDebug" class="debug-pill">GAME: waiting</div>
+  </section>
+
+
+  <!-- PAGE 4 -->
+  <section id="pageShowcase" class="page showcase-page">
+    <div class="showcase-backdrop"></div>
+    <img id="showcaseBg" class="showcase-bg-image" src="assets/showcase_bg.webp" alt="">
+    <img class="showcase-logo" src="assets/smooth_stomp_logo.webp" alt="Smooth Stomp">
+    <div class="showcase-product-stage">
+      <img src="assets/shoe_product.jpg" alt="Skechers product" class="product-image">
+      <div class="product-glow"></div>
+    </div>
+    <div class="theme-showcase-cover"><small>PRODUCT</small><strong>GOWALK</strong></div>
+
+    <div class="showcase-copy-card glass">
+      <div class="eyebrow">PRODUCT SHOWCASE</div>
+      <h2>SKECHERS GO WALK</h2>
+      <div id="featureText" class="feature-text">AIR COOLED MEMORY FOAM</div>
+      <div class="feature-dots">
+        <span></span><span></span><span></span><span></span>
+      </div>
+      <div class="showcase-wait">กำลังประมวลผลคะแนนของคุณ...</div>
+      <div class="showcase-count"><strong id="showcaseTime">10</strong><small>SEC</small></div>
+    </div>
+  </section>
+
+  <!-- PAGE 5 -->
+  <section id="pageResult" class="page result-page">
+    <div class="result-backdrop"></div>
+    <img id="resultBg" class="result-bg-image" src="assets/result_bg.webp" alt="">
+    <img class="result-logo" src="assets/smooth_stomp_logo.webp" alt="Smooth Stomp">
+    <div class="result-center">
+      <div class="result-label">YOUR SCORE</div>
+      <div id="finalScore" class="final-score">0</div>
+      <div class="result-points">POINTS</div>
+      <div id="resultMessage" class="result-message">NICE STEP!</div>
+      <div class="return-note">ถ่ายภาพอัตโนมัติใน <span id="returnTime">4</span> วินาที</div>
+    </div>
+  </section>
+
+
+  <div id="skipHint" class="skip-hint">SPACEBAR = ข้ามซีน</div>
+
+
+  <!-- PAGE 6 -->
+  <section id="pagePhoto" class="page photo-page">
+    <div class="photo-backdrop"></div>
+    <img class="photo-logo" src="assets/smooth_stomp_logo.webp" alt="Smooth Stomp">
+
+    <div class="photo-stage">
+      <video id="photoVideo" autoplay playsinline muted></video>
+      <canvas id="photoCanvas"></canvas>
+      <div class="photo-frame-glow"></div>
+
+      <div id="photoCountdown" class="photo-countdown">
+        <small>PHOTO IN</small>
+        <strong id="photoCount">3</strong>
+      </div>
+
+      <div class="photo-camera-status">
+        <p id="photoStatus" role="status">กำลังรอภาพจากกล้อง…</p>
+        <div id="photoRecovery" class="hidden">
+          <button id="photoRetry" type="button">เปิดกล้อง / ลองใหม่</button>
+          <button id="photoSkip" type="button">ดูอันดับโดยไม่ถ่ายรูป</button>
+        </div>
+      </div>
+      <div id="photoCaptured" class="photo-captured hidden">
+        PHOTO CAPTURED
+      </div>
+    </div>
+
+    <div class="photo-copy">
+      <h2>SMILE & MOVE!</h2>
+      <p>ระบบจะถ่ายรูปอัตโนมัติ แล้วพาไปหน้า Ranking</p>
+    </div>
+  </section>
+
+  <!-- PAGE 7 -->
+  <section id="pageRanking" class="page ranking-page">
+    <div class="ranking-backdrop"></div>
+    <img class="ranking-logo" src="assets/smooth_stomp_logo.webp" alt="Smooth Stomp">
+
+    <div class="ranking-shell glass">
+      <div class="ranking-head">
+        <div>
+          <div class="eyebrow">ALL-TIME EVENT RANKING</div>
+          <h2>TOP 10</h2>
+        </div>
+        <div class="ranking-current-score">
+          <small>YOUR SCORE</small>
+          <strong id="rankingCurrentScore">0</strong>
+        </div>
+      </div>
+
+      <div id="rankingRows" class="ranking-rows"></div>
+
+      <p id="rankingStorageStatus" role="status"></p>
+      <div id="currentRankRow" class="current-rank-row"></div>
+
+      <div class="ranking-footer">
+        <span>เก็บคะแนนผู้เล่นก่อนหน้าไว้ในเครื่อง</span>
+        <b>กลับหน้าแรกใน <span id="rankingReturn">8</span> วิ</b>
+      </div>
+    </div>
+  </section>
+
+    <div id="zoneConfig" class="zone-config hidden">
+      <div class="zone-config-panel">
+        <div class="zone-config-head">
+          <div>
+            <div class="zone-config-kicker">ZONE CONFIG</div>
+            <h2 id="configTitle">ตั้งค่าเกม</h2>
+          </div>
+          <button id="closeZoneConfig" type="button">×</button>
+        </div>
+
+        <p class="gameplay-only">ลาก Z1–Z6 บนภาพกล้อง แล้วกด “บันทึกค่า”</p>
+
+        <div class="registration-staff"><p id="registrationHint" role="status"></p><button id="retryRegistrationQR" type="button">โหลด QR ใหม่</button><details><summary>ยืนยันผู้ลงทะเบียน</summary><label>รหัสจากหน้าลงทะเบียน<input id="registrationCode" type="text" autocomplete="off" placeholder="รหัสผู้เล่น"></label><button id="confirmRegistration" type="button">ยืนยันรอบนี้</button></details><button id="playGuest" type="button">เล่นโดยไม่เก็บคะแนน</button><p id="registrationPlayerStatus">เล่นทั่วไป — ไม่บันทึกคะแนน</p><a href="dashboard.html" target="_blank" rel="noopener">Dashboard เจ้าหน้าที่</a></div>
+        <div class="config-controls">
+          <fieldset class="start-config-controls"><legend>หน้าเริ่มเกม</legend>
+            <label>วิธีเริ่ม <select id="startMode"><option value="hand">ยกมือ</option><option value="body">พบครึ่งตัวแล้วเริ่มอัตโนมัติ</option></select></label>
+            <label>มือที่ใช้ <select id="startHand"><option value="either">ข้างใดก็ได้</option><option value="left">มือซ้าย</option><option value="right">มือขวา</option></select></label>
+            <label>ยกมือค้าง <output id="holdValue">2 วินาที</output><input id="holdSeconds" type="range" min="0.5" max="5" step="0.5" value="2"></label>
+            <label><input id="showBodyLines" type="checkbox"> แสดงเส้นตรวจจับร่างกาย</label>
+          </fieldset>
+          <fieldset class="gameplay-only"><legend>Gameplay</legend>
+          <label>Hit Detection <select id="hitMode"><option value="body">BODY</option><option value="feet">FEET</option></select></label>
+          <label>Hit Radius <output id="radiusValue">9%</output><input id="hitRadius" type="range" min="0.04" max="0.18" step="0.01" value="0.09"></label>
+          <label>Item Size <output id="scaleValue">100%</output><input id="itemScale" type="range" min="0.7" max="1.5" step="0.05" value="1"></label>
+          <label>Max Active Items <output id="activeValue">2</output><input id="maxActiveItems" type="range" min="1" max="3" step="1" value="2"></label>
+          </fieldset>
+          <details><summary>นำเข้า / ส่งออกสำรอง</summary><button id="exportZones" class="zone-secondary" type="button">Export JSON</button>
+          <label>Load JSON <input id="loadZones" type="file" accept=".json,application/json"></label></details>
+        </div>
+        <p id="configStatus" role="status"></p>
+        <div class="zone-actions">
+          <button id="saveZones" class="zone-primary" type="button">บันทึกค่า</button>
+          <button id="resetZones" class="zone-secondary" type="button">Reset Default</button>
+        </div>
+
+        <div id="zoneList" class="zone-list gameplay-only"></div>
+        <small>Shortcut: กด O เพื่อเปิด/ปิด Config</small>
+      </div>
+    </div>
+
+
+</main>
+
+<script src="app.js"></script>
+<script src="registration-kiosk.js"></script>
+</body>
+</html>
