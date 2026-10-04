@@ -1,262 +1,238 @@
 <!doctype html>
 <html lang="th">
 <head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width,initial-scale=1">
-  <title>Smooth Stomp — Hand Start Prototype</title>
-  <link rel="stylesheet" href="styles.css">
-  <link rel="stylesheet" href="theme.css">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#eaf7ff">
+<title>Smooth Stomp v1.0.1 — Web Play</title>
+<style>
+*{box-sizing:border-box}html,body{margin:0;width:100%;height:100%;overflow:hidden;font-family:Inter,system-ui,-apple-system,"Segoe UI",sans-serif;background:#eaf7ff;color:#06376f}button,input,select{font:inherit}
+:root{--navy:#052d66;--navy2:#021e48;--blue:#0d72d5;--sky:#67ccff;--ice:#eaf7ff;--white:#fff;--gold:#ffb53a;--danger:#ff475d}
+#app{width:100vw;height:100vh;position:relative;overflow:hidden;background:linear-gradient(145deg,#f8fdff 0%,#e5f6ff 45%,#cfeeff 100%)}
+.screen{position:absolute;inset:0;display:none;overflow:hidden}.screen.active{display:block}
+.bg{position:absolute;inset:0;background:
+radial-gradient(circle at 50% 38%,rgba(255,255,255,.98) 0 18%,rgba(235,248,255,.78) 45%,rgba(163,216,246,.46) 100%),
+linear-gradient(130deg,transparent 0 29%,rgba(77,177,234,.12) 30% 31%,transparent 32% 100%)}
+.bg:before,.bg:after{content:"";position:absolute;border:1px solid rgba(25,112,174,.16);background:rgba(255,255,255,.2);transform:skewX(-25deg) rotate(-7deg);box-shadow:0 20px 70px rgba(31,103,154,.08)}
+.bg:before{width:46vw;height:120vh;left:-12vw;top:-18vh}.bg:after{width:38vw;height:110vh;right:-8vw;top:-12vh;transform:skewX(22deg) rotate(8deg)}
+.brand{position:absolute;z-index:30;top:2.2vh;left:50%;transform:translateX(-50%);text-align:center;pointer-events:none}
+.brand small{display:block;font-weight:950;letter-spacing:.09em;color:#073a76;font-size:clamp(10px,1vw,18px)}
+.logo{position:relative;margin-top:.25vh;font-weight:1000;font-style:italic;letter-spacing:-.08em;color:#08316a;font-size:clamp(38px,5.3vw,88px);line-height:.9;text-shadow:0 3px 0 rgba(91,192,239,.18)}
+.logo:before,.logo:after{content:"";position:absolute;left:50%;height:.18em;border-radius:999px;background:#5fc8f2;transform:translateX(-50%) rotate(-4deg);z-index:-1}
+.logo:before{width:106%;top:48%}.logo:after{width:83%;top:75%;opacity:.8}
+.version{position:absolute;z-index:50;right:1.2vw;top:1.1vh;padding:6px 10px;border-radius:999px;background:rgba(4,48,99,.86);color:white;font-size:11px;letter-spacing:.08em}
+.camera-stage{position:absolute;z-index:3;left:8vw;right:8vw;top:17vh;bottom:12vh;border-radius:4vw;overflow:hidden;background:#dceef8;border:2px solid rgba(48,153,220,.55);box-shadow:0 22px 60px rgba(41,103,151,.18),inset 0 0 40px rgba(255,255,255,.7)}
+.camera-stage video,.camera-stage canvas{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;transform:scaleX(-1)}canvas{pointer-events:none}
+.start-card{position:absolute;z-index:20;left:50%;bottom:2.8vh;transform:translateX(-50%);min-width:min(620px,86vw);padding:14px 24px;border-radius:28px;background:linear-gradient(180deg,rgba(8,76,145,.97),rgba(3,43,93,.98));border:1px solid #75d8ff;color:white;text-align:center;box-shadow:0 0 28px rgba(25,139,210,.26)}
+.start-card b{display:block;font-size:clamp(18px,2vw,34px)}.start-card span{font-size:13px;color:#d6f4ff}.progress{height:7px;margin-top:9px;background:rgba(255,255,255,.18);border-radius:99px;overflow:hidden}.progress i{display:block;height:100%;width:0;background:#83e0ff;border-radius:99px;transition:width .12s linear}
+#setup{z-index:100;background:rgba(231,247,255,.97);display:flex;align-items:center;justify-content:center}.setup-card{width:min(520px,90vw);padding:34px;border-radius:32px;background:white;border:1px solid #82ccee;box-shadow:0 30px 80px rgba(32,91,137,.22);text-align:center}.setup-card h1{margin:18px 0 8px;font-size:clamp(28px,3vw,46px)}.setup-card p{color:#4c7597}.primary{border:0;border-radius:16px;padding:15px 24px;background:linear-gradient(180deg,#0b75d2,#064889);color:white;font-weight:900;cursor:pointer;box-shadow:0 10px 24px rgba(11,92,159,.25)}.primary:disabled{opacity:.45}.minor{border:1px solid #76bfe9;background:white;color:#0b568e;border-radius:12px;padding:10px 14px;font-weight:800;cursor:pointer}
+#setupStatus{margin-top:14px;min-height:22px;font-size:13px;color:#547590}
+.hud{position:absolute;z-index:30;top:2.5vh;padding:10px 22px;min-width:175px;border-radius:22px;background:linear-gradient(180deg,rgba(255,255,255,.98),rgba(225,244,255,.96));border:1px solid rgba(64,162,222,.5);box-shadow:0 8px 22px rgba(34,98,148,.14);text-align:center}.hud small{display:block;font-size:12px;letter-spacing:.12em;font-weight:900}.hud strong{display:block;font-size:clamp(24px,3vw,54px);color:#052d66}.hud.left{left:2.2vw}.hud.right{right:2.2vw}
+.game-camera{position:absolute;inset:12.5vh 0 7vh;background:#d8eaf4;overflow:hidden}.game-camera video,.game-camera canvas{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;transform:scaleX(-1)}#items,#fx{position:absolute;inset:0;pointer-events:none}
+.item{position:absolute;transform:translate(-50%,-50%);display:grid;place-items:center;border-radius:50%;filter:drop-shadow(0 0 14px rgba(255,255,255,.95));animation:float 1.1s ease-in-out infinite alternate;user-select:none}.item.diamond{color:#55dbff}.item.star{color:#ffd34b}.item.red{color:#ff4d65}.item .glyph{font-size:clamp(52px,7vw,112px);line-height:1;text-shadow:0 0 16px currentColor,0 0 32px currentColor}.item .pts{position:absolute;top:100%;font-weight:1000;font-size:clamp(18px,1.8vw,30px);color:white;text-shadow:0 2px 10px #002d58}
+@keyframes float{from{translate:0 -5px}to{translate:0 5px}}
+.step{position:absolute;z-index:30;left:50%;bottom:1.4vh;transform:translateX(-50%);padding:11px 22px;border-radius:99px;background:#06488e;color:white;font-weight:950;letter-spacing:.07em;border:1px solid #65d2ff}.legend{position:absolute;z-index:30;right:2vw;bottom:1vh;display:flex;gap:8px}.legend span{padding:7px 10px;border-radius:12px;background:rgba(255,255,255,.92);border:1px solid #b9def2;font-weight:900}
+.ready-center,.result-center,.showcase-center,.photo-center,.ranking-center{position:absolute;z-index:20;inset:0;display:flex;align-items:center;justify-content:center;flex-direction:column;text-align:center}
+.ring{width:min(360px,36vw);aspect-ratio:1;border-radius:50%;display:grid;place-items:center;background:radial-gradient(circle,#fff 0 50%,#e2f6ff 75%,#bfdff0 100%);border:2px solid #56baf0;box-shadow:0 0 45px rgba(55,170,235,.28),inset 0 0 40px white}.ring strong{font-size:clamp(100px,15vw,260px);line-height:.8;color:#0757a3;text-shadow:0 0 25px rgba(76,191,255,.34)}.ring small{font-weight:1000;letter-spacing:.14em}
+.showcase-card{width:min(760px,78vw);padding:32px 40px;border-radius:34px;background:linear-gradient(135deg,rgba(5,57,119,.98),rgba(2,35,79,.98));border:2px solid #73d7ff;color:white;box-shadow:0 0 34px rgba(52,165,231,.28)}.showcase-card h2{font-size:clamp(36px,5vw,82px);margin:4px 0}.showcase-card .shoe{font-size:clamp(80px,12vw,170px);filter:drop-shadow(0 18px 15px rgba(0,0,0,.16))}.features{display:flex;justify-content:center;gap:12px;flex-wrap:wrap}.features span{padding:8px 13px;border-radius:99px;background:rgba(255,255,255,.1);border:1px solid rgba(135,222,255,.5);font-size:12px;font-weight:900}.timerbubble{position:absolute;left:2vw;top:2vh;padding:12px 20px;border-radius:22px;background:#063c7b;color:white;border:1px solid #64d4ff;font-weight:900}
+.scorebox{width:min(680px,72vw);padding:34px;border-radius:36px;background:linear-gradient(135deg,#073f82,#032d66 75%);border:2px solid #70d7ff;box-shadow:0 0 35px rgba(35,163,238,.35),inset 0 0 35px rgba(60,142,225,.18);color:white}.scorebox .label{font-size:clamp(20px,2vw,36px);font-weight:1000}.scorebox .score{font-size:clamp(110px,16vw,250px);line-height:.9;font-weight:1000;color:white;text-shadow:0 0 12px #75dfff,0 0 30px #1a9eff,0 0 60px rgba(65,189,255,.7)}.scorebox .msg{font-size:clamp(22px,2.5vw,44px);font-weight:1000;color:#8edfff}.scorebox .sub{margin-top:12px;color:#ccefff}
+.photo-frame{position:relative;width:min(1080px,78vw);aspect-ratio:16/9;border-radius:4vw;overflow:hidden;background:#d9ebf5;border:4px solid #61ccff;box-shadow:0 15px 50px rgba(31,103,158,.2)}.photo-frame video,.photo-frame canvas{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;transform:scaleX(-1)}.photo-frame canvas{transform:none}.photo-count{position:absolute;z-index:8;inset:0;display:grid;place-items:center;color:white;font-size:clamp(110px,18vw,280px);font-weight:1000;text-shadow:0 0 20px #0279d7,0 0 45px #003b79}.photo-note{margin-top:16px;font-weight:900}
+.ranking-panel{width:min(820px,84vw);max-height:74vh;padding:24px;border-radius:30px;background:linear-gradient(180deg,rgba(4,53,107,.98),rgba(3,36,78,.99));border:2px solid #73d5ff;color:white;box-shadow:0 0 30px rgba(37,156,230,.25);overflow:hidden}.ranking-panel h2{font-size:clamp(30px,4vw,58px);margin:0 0 10px}.rows{display:grid;gap:5px}.row{display:grid;grid-template-columns:58px 58px 1fr 120px;align-items:center;min-height:44px;padding:5px 11px;border-radius:12px;background:linear-gradient(90deg,rgba(7,54,104,.96),rgba(10,72,133,.9));border:1px solid rgba(125,207,255,.25)}.row.you{background:linear-gradient(90deg,#a96b17,#da9425 60%,#9e6011);border-color:#ffd36b}.thumb{width:48px;height:30px;border-radius:7px;object-fit:cover;background:#8cb0c9}.rscore{font-weight:1000;font-size:20px}.rankfoot{margin-top:10px;color:#cce9f8;font-size:12px}
+.skip{position:absolute;z-index:80;left:12px;bottom:10px;padding:6px 10px;border-radius:99px;background:rgba(2,31,73,.77);color:#dff7ff;font-size:10px;letter-spacing:.08em}
+.config-btn{position:absolute;z-index:70;right:12px;bottom:10px;padding:8px 12px;border-radius:12px;border:1px solid #62cfff;background:#063d7b;color:white;font-weight:900;cursor:pointer}
+#config{position:absolute;z-index:200;inset:0;background:rgba(1,24,52,.7);display:none;align-items:center;justify-content:center}#config.open{display:flex}.config-panel{width:min(520px,90vw);max-height:86vh;overflow:auto;padding:24px;border-radius:24px;background:white;color:#063665;border:1px solid #65bfe9;box-shadow:0 25px 70px rgba(0,28,59,.35)}.config-head{display:flex;justify-content:space-between;align-items:center}.config-panel label{display:block;margin:14px 0}.config-panel input[type=range],.config-panel select{width:100%}.zone-dot{position:absolute;z-index:45;width:44px;height:44px;margin:-22px;border-radius:50%;display:none;place-items:center;background:#073b78;color:white;border:2px solid #65d1ff;font-weight:1000;cursor:grab;pointer-events:auto}.config-open .zone-dot{display:grid}.status-pill{position:absolute;z-index:35;left:50%;top:13.5vh;transform:translateX(-50%);padding:7px 12px;border-radius:99px;background:rgba(2,37,83,.8);color:white;font-size:11px}
+@media(max-width:700px){.camera-stage{left:3vw;right:3vw;top:18vh;bottom:14vh}.hud{min-width:128px;padding:8px 12px}.brand small{font-size:9px}.legend{display:none}.row{grid-template-columns:42px 44px 1fr 80px}.ranking-panel{padding:14px}}
+</style>
 </head>
 <body>
-<main id="app">
+<div id="app">
+<div class="version">v1.0.1 WEB PLAY</div>
 
-  <!-- Permission gate (not counted as a game page) -->
-  <section id="setup" class="setup">
-    <div class="setup-card">
-      <img src="assets/smooth_stomp_logo.webp" alt="Smooth Stomp">
-      <h1>เปิดกล้องเพื่อเริ่มระบบ</h1>
-      <p id="setupInstructions">ยกมือให้สูงกว่าไหล่ แล้วค้างไว้ 2 วินาที</p>
-      <button id="enableCamera">เปิด Webcam</button>
-      <button id="openSetupConfig" type="button">⚙ ตั้งค่าหน้าแรก</button>
-      <div id="setupStatus">กำลังโหลดระบบตรวจจับท่าทาง...</div>
-    </div>
-  </section>
+<section id="setup" class="screen active">
+  <div class="setup-card">
+    <div class="logo">Smooth Stomp</div>
+    <h1>เปิดกล้องเพื่อเริ่มเล่น</h1>
+    <p>เวอร์ชันเว็บ • กล้องทำงานผ่าน HTTPS • ยกมือค้าง 2 วินาทีเพื่อเริ่ม</p>
+    <button id="enable" class="primary">เปิด Webcam</button>
+    <div id="setupStatus">กำลังโหลด Pose Detection…</div>
+  </div>
+</section>
 
-  <!-- PAGE 1 -->
-  <section id="pageAttract" class="page active">
-    <div class="ambient"></div>
+<section id="attract" class="screen">
+  <div class="bg"></div>
+  <div class="brand"><small>SKECHERS GOWALK GLIDE-STEP 2.0</small><div class="logo">Smooth Stomp</div></div>
+  <div class="camera-stage"><video id="video" autoplay playsinline muted></video><canvas id="poseCanvas"></canvas></div>
+  <div class="status-pill" id="poseStatus">POSE: loading</div>
+  <div class="start-card"><b id="startText">ยืนให้เห็นครึ่งตัว</b><span id="startSub">จากศีรษะถึงช่วงเอว แล้วชูมือค้าง 2 วินาที</span><div class="progress"><i id="startProgress"></i></div></div>
+  <button class="config-btn" id="openConfigA">⚙ CONFIG</button>
+</section>
 
-    <div class="camera-hole">
-      <video id="camera" autoplay playsinline muted></video>
-      <canvas id="poseCanvas"></canvas>
-      <div id="cameraMessage" class="camera-message">กำลังเปิดกล้อง...</div>
-    </div>
+<section id="ready" class="screen">
+  <div class="bg"></div><div class="brand"><small>SKECHERS GOWALK GLIDE-STEP 2.0</small><div class="logo">Smooth Stomp</div></div>
+  <div class="ready-center"><div class="ring"><div><strong id="countdown">3</strong><small id="countLabel">GET READY</small></div></div><p><b>HAND DETECTED • PLAYER READY</b></p></div>
+</section>
 
-    <img class="overlay-art" src="assets/attract_overlay.webp" alt="Smooth Stomp UI">
+<section id="game" class="screen">
+  <div class="hud left"><small>TIME</small><strong id="time">00:40</strong></div>
+  <div class="brand"><div class="logo">Smooth Stomp</div></div>
+  <div class="hud right"><small>SCORE</small><strong id="score">0</strong></div>
+  <div class="game-camera" id="gameCamera"><video id="gameVideo" autoplay playsinline muted></video><canvas id="gameCanvas"></canvas><div id="items"></div><div id="fx"></div></div>
+  <div class="step">👣 STEP TO COLLECT</div><div class="legend"><span>💎 +50</span><span>⭐ +300</span><span>🔻 -100</span></div>
+  <button class="config-btn" id="openConfigG">⚙ CONFIG</button>
+</section>
 
-    <div class="body-gate glass">
-      <div class="body-gate-head">
-        <span id="bodyGateState">กำลังตรวจจับผู้เล่นครึ่งตัว</span>
-        <strong id="bodyGatePercent">0%</strong>
-      </div>
-      <div class="body-progress"><i id="bodyProgress"></i></div>
-      <small id="bodyHint">กรุณายืนให้เห็นตั้งแต่ศีรษะลงมาถึงช่วงเอว</small>
-    </div>
+<section id="showcase" class="screen">
+  <div class="bg"></div><div class="brand"><small>SKECHERS GOWALK GLIDE-STEP 2.0</small><div class="logo">Smooth Stomp</div></div>
+  <div class="timerbubble">SHOWCASE <strong id="showTime">10</strong> SEC</div>
+  <div class="showcase-center"><div class="showcase-card"><div class="shoe">👟</div><small>PRODUCT SHOWCASE</small><h2>GOWALK<br>GLIDE-STEP 2.0</h2><div class="features"><span>LIGHTWEIGHT COMFORT</span><span>AIR-COOLED MEMORY FOAM</span><span>MACHINE WASHABLE</span><span>SLIP-INS</span><span>ULTRA GO</span></div><p>COMFORT FUELS MORE</p></div></div>
+</section>
 
-    <div id="gesturePanel" class="gesture-panel hidden">
-      <div class="gesture-ring" id="gestureRing">
-        <div class="gesture-inner">
-          <div class="hand">✋</div>
-          <strong id="gesturePercent">0%</strong>
-        </div>
-      </div>
-      <div class="gesture-copy">
-        <span id="gestureState">ผู้เล่นพร้อมแล้ว</span>
-        <b id="startInstructions">ยกมือให้สูงกว่าไหล่ แล้วค้างไว้ 2 วินาที</b>
-      </div>
-    </div>
+<section id="result" class="screen">
+  <div class="bg"></div><div class="brand"><small>SKECHERS GOWALK GLIDE-STEP 2.0</small><div class="logo">Smooth Stomp</div></div>
+  <div class="result-center"><div class="scorebox"><div class="label">YOUR SCORE</div><div class="score" id="finalScore">0</div><div class="msg" id="resultMsg">NICE STEP!</div><div class="sub">ถ่ายภาพอัตโนมัติใน <span id="resultTime">4</span> วินาที</div></div></div>
+</section>
 
-    <button id="openAttractConfig" class="config-open" type="button">⚙ CONFIG</button>
-    <aside class="registration-qr" aria-label="QR ลงทะเบียน"><img id="registrationQR" src="assets/registration-qr.svg" alt="QR ลงทะเบียน"></aside>
-    <div class="debug-pill" id="debugText">POSE: loading</div>
-  </section>
+<section id="photo" class="screen">
+  <div class="bg"></div><div class="brand"><small>SKECHERS GOWALK GLIDE-STEP 2.0</small><div class="logo">Smooth Stomp</div></div>
+  <div class="photo-center"><div class="photo-frame"><video id="photoVideo" autoplay playsinline muted></video><canvas id="photoCanvas"></canvas><div class="photo-count" id="photoCount">3</div></div><div class="photo-note" id="photoNote">มองกล้อง แล้วเตรียมถ่ายรูป</div></div>
+</section>
 
-  <!-- PAGE 2 -->
-  <section id="pageReady" class="page ready-page">
-    <div class="ready-bg"></div>
-    <img class="ready-logo" src="assets/smooth_stomp_logo.webp" alt="Smooth Stomp">
-    <div class="countdown-wrap">
-      <div id="countdown" class="countdown">3</div>
-      <div id="countdownLabel" class="countdown-label">GET READY</div>
-    </div>
-    <div id="readyFoot" class="ready-foot">HAND DETECTED • PLAYER READY</div>
-  </section>
+<section id="ranking" class="screen">
+  <div class="bg"></div><div class="brand"><small>SKECHERS GOWALK GLIDE-STEP 2.0</small><div class="logo">Smooth Stomp</div></div>
+  <div class="ranking-center"><div class="ranking-panel"><small>ALL-TIME EVENT RANKING</small><h2>TOP 10</h2><div class="rows" id="rankingRows"></div><div class="rankfoot">YOUR SCORE <b id="rankingScore">0</b> • กลับหน้าแรกใน <span id="rankingTime">8</span> วิ</div></div></div>
+</section>
 
+<div class="skip">SPACEBAR = ข้ามซีน</div>
 
-  <!-- PAGE 3 -->
-  <section id="pageGame" class="page game-page">
-    <div class="game-ambient"></div>
+<div id="config">
+  <div class="config-panel">
+    <div class="config-head"><div><small>ZONE CONFIG</small><h2>ตั้งค่า Gameplay</h2></div><button id="closeConfig" class="minor">✕</button></div>
+    <p>เปิด Config ระหว่าง Gameplay แล้วลาก Z1–Z6 บนภาพกล้องได้โดยตรง</p>
+    <label>Hit Mode<select id="hitMode"><option value="body">BODY</option><option value="feet">FEET</option></select></label>
+    <label>Hit Radius <b id="radiusOut">9%</b><input id="radius" type="range" min="0.04" max="0.18" step="0.01" value="0.09"></label>
+    <label>Item Size <b id="scaleOut">100%</b><input id="scale" type="range" min="0.7" max="1.5" step="0.05" value="1"></label>
+    <label>Max Active <b id="activeOut">2</b><input id="active" type="range" min="1" max="3" step="1" value="2"></label>
+    <button id="resetZones" class="minor">Reset 6 Zones</button>
+  </div>
+</div>
+</div>
 
-    <div class="game-hud hud-time">
-      <small>TIME</small>
-      <strong id="gameTime">00:40</strong>
-    </div>
-
-    <img class="game-title-logo" src="assets/smooth_stomp_logo.webp" alt="Smooth Stomp">
-
-    <div class="game-hud hud-score">
-      <small>SCORE</small>
-      <strong id="gameScore">0</strong>
-    </div>
-
-    <div id="gameCamera" class="game-camera">
-      <video id="gameVideo" autoplay playsinline muted></video>
-      <canvas id="gamePoseCanvas"></canvas>
-      <div id="spawnLayer"></div>
-      <div id="fxLayer"></div>
-    </div>
-
-    <div class="step-hint">👣 <span>STEP TO COLLECT</span></div>
-
-    <div class="legend-mini">
-      <div><img src="assets/diamond.webp"><span>+50</span></div>
-      <div><img src="assets/star.webp"><span>+300</span></div>
-      <div><img src="assets/red_gem.webp"><span>-100</span></div>
-    </div>
-
-
-    <button id="openZoneConfig" class="config-open" type="button">⚙ CONFIG</button>
-    <div id="gameDebug" class="debug-pill">GAME: waiting</div>
-  </section>
-
-
-  <!-- PAGE 4 -->
-  <section id="pageShowcase" class="page showcase-page">
-    <div class="showcase-backdrop"></div>
-    <img id="showcaseBg" class="showcase-bg-image" src="assets/showcase_bg.webp" alt="">
-    <img class="showcase-logo" src="assets/smooth_stomp_logo.webp" alt="Smooth Stomp">
-    <div class="showcase-product-stage">
-      <img src="assets/shoe_product.jpg" alt="Skechers product" class="product-image">
-      <div class="product-glow"></div>
-    </div>
-    <div class="theme-showcase-cover"><small>PRODUCT</small><strong>GOWALK</strong></div>
-
-    <div class="showcase-copy-card glass">
-      <div class="eyebrow">PRODUCT SHOWCASE</div>
-      <h2>SKECHERS GO WALK</h2>
-      <div id="featureText" class="feature-text">AIR COOLED MEMORY FOAM</div>
-      <div class="feature-dots">
-        <span></span><span></span><span></span><span></span>
-      </div>
-      <div class="showcase-wait">กำลังประมวลผลคะแนนของคุณ...</div>
-      <div class="showcase-count"><strong id="showcaseTime">10</strong><small>SEC</small></div>
-    </div>
-  </section>
-
-  <!-- PAGE 5 -->
-  <section id="pageResult" class="page result-page">
-    <div class="result-backdrop"></div>
-    <img id="resultBg" class="result-bg-image" src="assets/result_bg.webp" alt="">
-    <img class="result-logo" src="assets/smooth_stomp_logo.webp" alt="Smooth Stomp">
-    <div class="result-center">
-      <div class="result-label">YOUR SCORE</div>
-      <div id="finalScore" class="final-score">0</div>
-      <div class="result-points">POINTS</div>
-      <div id="resultMessage" class="result-message">NICE STEP!</div>
-      <div class="return-note">ถ่ายภาพอัตโนมัติใน <span id="returnTime">4</span> วินาที</div>
-    </div>
-  </section>
-
-
-  <div id="skipHint" class="skip-hint">SPACEBAR = ข้ามซีน</div>
-
-
-  <!-- PAGE 6 -->
-  <section id="pagePhoto" class="page photo-page">
-    <div class="photo-backdrop"></div>
-    <img class="photo-logo" src="assets/smooth_stomp_logo.webp" alt="Smooth Stomp">
-
-    <div class="photo-stage">
-      <video id="photoVideo" autoplay playsinline muted></video>
-      <canvas id="photoCanvas"></canvas>
-      <div class="photo-frame-glow"></div>
-
-      <div id="photoCountdown" class="photo-countdown">
-        <small>PHOTO IN</small>
-        <strong id="photoCount">3</strong>
-      </div>
-
-      <div class="photo-camera-status">
-        <p id="photoStatus" role="status">กำลังรอภาพจากกล้อง…</p>
-        <div id="photoRecovery" class="hidden">
-          <button id="photoRetry" type="button">เปิดกล้อง / ลองใหม่</button>
-          <button id="photoSkip" type="button">ดูอันดับโดยไม่ถ่ายรูป</button>
-        </div>
-      </div>
-      <div id="photoCaptured" class="photo-captured hidden">
-        PHOTO CAPTURED
-      </div>
-    </div>
-
-    <div class="photo-copy">
-      <h2>SMILE & MOVE!</h2>
-      <p>ระบบจะถ่ายรูปอัตโนมัติ แล้วพาไปหน้า Ranking</p>
-    </div>
-  </section>
-
-  <!-- PAGE 7 -->
-  <section id="pageRanking" class="page ranking-page">
-    <div class="ranking-backdrop"></div>
-    <img class="ranking-logo" src="assets/smooth_stomp_logo.webp" alt="Smooth Stomp">
-
-    <div class="ranking-shell glass">
-      <div class="ranking-head">
-        <div>
-          <div class="eyebrow">ALL-TIME EVENT RANKING</div>
-          <h2>TOP 10</h2>
-        </div>
-        <div class="ranking-current-score">
-          <small>YOUR SCORE</small>
-          <strong id="rankingCurrentScore">0</strong>
-        </div>
-      </div>
-
-      <div id="rankingRows" class="ranking-rows"></div>
-
-      <p id="rankingStorageStatus" role="status"></p>
-      <div id="currentRankRow" class="current-rank-row"></div>
-
-      <div class="ranking-footer">
-        <span>เก็บคะแนนผู้เล่นก่อนหน้าไว้ในเครื่อง</span>
-        <b>กลับหน้าแรกใน <span id="rankingReturn">8</span> วิ</b>
-      </div>
-    </div>
-  </section>
-
-    <div id="zoneConfig" class="zone-config hidden">
-      <div class="zone-config-panel">
-        <div class="zone-config-head">
-          <div>
-            <div class="zone-config-kicker">ZONE CONFIG</div>
-            <h2 id="configTitle">ตั้งค่าเกม</h2>
-          </div>
-          <button id="closeZoneConfig" type="button">×</button>
-        </div>
-
-        <p class="gameplay-only">ลาก Z1–Z6 บนภาพกล้อง แล้วกด “บันทึกค่า”</p>
-
-        <div class="registration-staff"><p id="registrationHint" role="status"></p><button id="retryRegistrationQR" type="button">โหลด QR ใหม่</button><details><summary>ยืนยันผู้ลงทะเบียน</summary><label>รหัสจากหน้าลงทะเบียน<input id="registrationCode" type="text" autocomplete="off" placeholder="รหัสผู้เล่น"></label><button id="confirmRegistration" type="button">ยืนยันรอบนี้</button></details><button id="playGuest" type="button">เล่นโดยไม่เก็บคะแนน</button><p id="registrationPlayerStatus">เล่นทั่วไป — ไม่บันทึกคะแนน</p><a href="dashboard.html" target="_blank" rel="noopener">Dashboard เจ้าหน้าที่</a></div>
-        <div class="config-controls">
-          <fieldset class="start-config-controls"><legend>หน้าเริ่มเกม</legend>
-            <label>วิธีเริ่ม <select id="startMode"><option value="hand">ยกมือ</option><option value="body">พบครึ่งตัวแล้วเริ่มอัตโนมัติ</option></select></label>
-            <label>มือที่ใช้ <select id="startHand"><option value="either">ข้างใดก็ได้</option><option value="left">มือซ้าย</option><option value="right">มือขวา</option></select></label>
-            <label>ยกมือค้าง <output id="holdValue">2 วินาที</output><input id="holdSeconds" type="range" min="0.5" max="5" step="0.5" value="2"></label>
-            <label><input id="showBodyLines" type="checkbox"> แสดงเส้นตรวจจับร่างกาย</label>
-          </fieldset>
-          <fieldset class="gameplay-only"><legend>Gameplay</legend>
-          <label>Hit Detection <select id="hitMode"><option value="body">BODY</option><option value="feet">FEET</option></select></label>
-          <label>Hit Radius <output id="radiusValue">9%</output><input id="hitRadius" type="range" min="0.04" max="0.18" step="0.01" value="0.09"></label>
-          <label>Item Size <output id="scaleValue">100%</output><input id="itemScale" type="range" min="0.7" max="1.5" step="0.05" value="1"></label>
-          <label>Max Active Items <output id="activeValue">2</output><input id="maxActiveItems" type="range" min="1" max="3" step="1" value="2"></label>
-          </fieldset>
-          <details><summary>นำเข้า / ส่งออกสำรอง</summary><button id="exportZones" class="zone-secondary" type="button">Export JSON</button>
-          <label>Load JSON <input id="loadZones" type="file" accept=".json,application/json"></label></details>
-        </div>
-        <p id="configStatus" role="status"></p>
-        <div class="zone-actions">
-          <button id="saveZones" class="zone-primary" type="button">บันทึกค่า</button>
-          <button id="resetZones" class="zone-secondary" type="button">Reset Default</button>
-        </div>
-
-        <div id="zoneList" class="zone-list gameplay-only"></div>
-        <small>Shortcut: กด O เพื่อเปิด/ปิด Config</small>
-      </div>
-    </div>
-
-
-</main>
-
-<script src="app.js"></script>
-<script src="registration-kiosk.js"></script>
+<script type="module">
+const $=id=>document.getElementById(id);
+const screens=["setup","attract","ready","game","showcase","result","photo","ranking"];
+const ZDEFAULT=[{x:.18,y:.68},{x:.36,y:.48},{x:.50,y:.72},{x:.64,y:.48},{x:.82,y:.68},{x:.50,y:.34}];
+let zones=JSON.parse(localStorage.getItem("ss-zones-web")||"null")||ZDEFAULT.map(z=>({...z}));
+let cfg=JSON.parse(localStorage.getItem("ss-cfg-web")||"null")||{hitMode:"body",hitRadius:.09,itemScale:1,maxActive:2};
+let stream=null,pose=null,lastPoseTime=-1,lastLandmarks=null,poseLoop=0,current="setup";
+let startHold=0,startLast=0,score=0,gameStart=0,gameEnd=0,spawnAt=0,zoneIndex=0,activeItems=[],sceneTimer=null,currentPhoto="";
+const bones=[[11,12],[11,13],[13,15],[12,14],[14,16],[11,23],[12,24],[23,24],[23,25],[25,27],[24,26],[26,28]];
+function show(id){screens.forEach(s=>$(s).classList.toggle("active",s===id));current=id;clearTimeout(sceneTimer);if(id==="attract"){startHold=0;startLast=performance.now();$("startProgress").style.width="0%"}}
+function fmt(sec){return "00:"+String(Math.max(0,Math.ceil(sec))).padStart(2,"0")}
+function distSeg(px,py,ax,ay,bx,by){const vx=bx-ax,vy=by-ay,wx=px-ax,wy=py-ay;const c=vx*vx+vy*vy||1;let t=(wx*vx+wy*vy)/c;t=Math.max(0,Math.min(1,t));return Math.hypot(px-(ax+t*vx),py-(ay+t*vy))}
+async function initPose(){
+  try{
+    const m=await import("https://cdn.jsdelivr.net/npm/@mediapipe/tasks-vision@0.10.14");
+    const fileset=await m.FilesetResolver.forVisionTasks("https://cdn.jsdelivr.net/npm/@mediapipe/tasks-vision@0.10.14/wasm");
+    pose=await m.PoseLandmarker.createFromOptions(fileset,{baseOptions:{modelAssetPath:"https://storage.googleapis.com/mediapipe-models/pose_landmarker/pose_landmarker_lite/float16/1/pose_landmarker_lite.task",delegate:"GPU"},runningMode:"VIDEO",numPoses:1,minPoseDetectionConfidence:.45,minTrackingConfidence:.45});
+    $("setupStatus").textContent="Pose Detection พร้อมแล้ว";
+  }catch(e){console.warn(e);$("setupStatus").textContent="Pose โหลดไม่สำเร็จ — ยังเล่นได้ด้วยเมาส์/ทัช และ SPACE";}
+}
+initPose();
+async function openCamera(){
+  $("enable").disabled=true;$("setupStatus").textContent="กำลังขอสิทธิ์กล้อง…";
+  try{
+    stream=await navigator.mediaDevices.getUserMedia({video:{width:{ideal:1280},height:{ideal:720},facingMode:"user"},audio:false});
+    [$("video"),$("gameVideo"),$("photoVideo")].forEach(v=>{v.srcObject=stream;v.play().catch(()=>{})});
+    show("attract");requestAnimationFrame(track);
+  }catch(e){$("setupStatus").textContent="เปิดกล้องไม่ได้: "+e.message;$("enable").disabled=false}
+}
+$("enable").onclick=openCamera;
+function halfBody(lm){return [0,11,12,23,24].every(i=>lm[i]&&lm[i].visibility>.45)}
+function handUp(lm){return (lm[15]&&lm[11]&&lm[15].visibility>.35&&lm[15].y<lm[11].y-.03)||(lm[16]&&lm[12]&&lm[16].visibility>.35&&lm[16].y<lm[12].y-.03)}
+function drawPose(canvas,lm){
+  const c=canvas.getContext("2d"),w=canvas.width=canvas.clientWidth*devicePixelRatio,h=canvas.height=canvas.clientHeight*devicePixelRatio;c.clearRect(0,0,w,h);if(!lm)return;
+  c.strokeStyle="rgba(100,220,255,.75)";c.lineWidth=2*devicePixelRatio;c.fillStyle="#fff";
+  bones.forEach(([a,b])=>{if(lm[a]?.visibility>.3&&lm[b]?.visibility>.3){c.beginPath();c.moveTo((1-lm[a].x)*w,lm[a].y*h);c.lineTo((1-lm[b].x)*w,lm[b].y*h);c.stroke()}});
+  [0,11,12,13,14,15,16,23,24,25,26,27,28].forEach(i=>{if(lm[i]?.visibility>.3){c.beginPath();c.arc((1-lm[i].x)*w,lm[i].y*h,4*devicePixelRatio,0,Math.PI*2);c.fill()}});
+}
+async function track(now){
+  if(stream){
+    const v=$("video");
+    if(pose&&v.readyState>=2&&v.currentTime!==lastPoseTime){
+      lastPoseTime=v.currentTime;
+      try{const r=pose.detectForVideo(v,now);lastLandmarks=r.landmarks?.[0]||null}catch(e){}
+    }
+    if(current==="attract"){
+      drawPose($("poseCanvas"),lastLandmarks);
+      const hb=lastLandmarks&&halfBody(lastLandmarks),up=hb&&handUp(lastLandmarks);
+      $("poseStatus").textContent=pose?(hb?"POSE: PLAYER DETECTED":"POSE: SEARCHING"):"POSE: FALLBACK MODE";
+      $("startText").textContent=hb?(up?"ค้างมือไว้…":"ชูมือเพื่อเริ่มเล่น"):"ยืนให้เห็นครึ่งตัว";
+      const dt=Math.min(80,now-startLast);startLast=now;startHold=up?Math.min(2000,startHold+dt):Math.max(0,startHold-dt*1.7);
+      $("startProgress").style.width=(startHold/20)+"%";
+      if(startHold>=2000)startReady();
+    }
+    if(current==="game"){drawPose($("gameCanvas"),lastLandmarks);hitTest();}
+  }
+  requestAnimationFrame(track);
+}
+function startReady(){
+  if(current!=="attract")return;show("ready");let n=3;$("countdown").textContent=n;$("countLabel").textContent="GET READY";
+  const step=()=>{n--;if(n>0){$("countdown").textContent=n;sceneTimer=setTimeout(step,850)}else{$("countdown").textContent="GO!";$("countLabel").textContent="MOVE & COLLECT";sceneTimer=setTimeout(startGame,700)}};sceneTimer=setTimeout(step,850)
+}
+function startGame(){
+  show("game");score=0;$("score").textContent="0";activeItems.forEach(x=>x.el.remove());activeItems=[];zoneIndex=0;gameStart=performance.now();gameEnd=gameStart+40000;spawnAt=0;renderZones();requestAnimationFrame(gameTick)
+}
+function phaseWeights(elapsed){return elapsed<10?[.85,.05,.10,1250]:elapsed<25?[.78,.07,.15,1000]:[.72,.10,.18,800]}
+function spawnItem(now){
+  const elapsed=(now-gameStart)/1000,[d,s,r,interval]=phaseWeights(elapsed);const roll=Math.random();const type=roll<d?"diamond":roll<d+s?"star":"red";const pts=type==="diamond"?50:type==="star"?300:-100;const glyph=type==="diamond"?"💎":type==="star"?"⭐":"🔻";const z=zones[zoneIndex++%6];
+  const el=document.createElement("div");el.className="item "+type;el.style.left=(z.x*100)+"%";el.style.top=(z.y*100)+"%";el.style.transform="translate(-50%,-50%) scale("+cfg.itemScale+")";el.innerHTML='<div class="glyph">'+glyph+'</div><div class="pts">'+(pts>0?"+":"")+pts+'</div>';$("items").appendChild(el);
+  activeItems.push({el,x:z.x,y:z.y,pts,type,born:now,hit:false});spawnAt=now+interval
+}
+function gameTick(now){
+  if(current!=="game")return;const remain=(gameEnd-now)/1000;$("time").textContent=fmt(remain);
+  if(remain<=0){showShowcase();return}
+  if(now>=spawnAt&&activeItems.length<cfg.maxActive)spawnItem(now);
+  activeItems=activeItems.filter(it=>{if(now-it.born>2300){it.el.remove();return false}return true});
+  requestAnimationFrame(gameTick)
+}
+function hitTest(){
+  if(!lastLandmarks||current!=="game")return;
+  const pts=cfg.hitMode==="feet"?[27,28,29,30,31,32]:[0,11,12,13,14,15,16,23,24,25,26,27,28];
+  activeItems.forEach(it=>{
+    if(it.hit)return;let hit=pts.some(i=>lastLandmarks[i]&&lastLandmarks[i].visibility>.28&&Math.hypot((1-lastLandmarks[i].x)-it.x,lastLandmarks[i].y-it.y)<cfg.hitRadius);
+    if(!hit&&cfg.hitMode==="body")hit=bones.some(([a,b])=>lastLandmarks[a]?.visibility>.28&&lastLandmarks[b]?.visibility>.28&&distSeg(it.x,it.y,1-lastLandmarks[a].x,lastLandmarks[a].y,1-lastLandmarks[b].x,lastLandmarks[b].y)<cfg.hitRadius);
+    if(hit)collect(it)
+  })
+}
+function collect(it){if(it.hit)return;it.hit=true;score=Math.max(0,score+it.pts);$("score").textContent=score.toLocaleString();it.el.style.transition=".18s";it.el.style.transform+=" scale(1.8)";it.el.style.opacity="0";setTimeout(()=>it.el.remove(),180);activeItems=activeItems.filter(x=>x!==it)}
+function pointerHit(e){
+  if(current!=="game")return;const r=$("gameCamera").getBoundingClientRect(),x=(e.clientX-r.left)/r.width,y=(e.clientY-r.top)/r.height;activeItems.forEach(it=>{if(Math.hypot(x-it.x,y-it.y)<cfg.hitRadius*1.4)collect(it)})
+}
+$("gameCamera").addEventListener("pointermove",e=>{if(e.buttons||e.pointerType!=="mouse")pointerHit(e)});$("gameCamera").addEventListener("pointerdown",pointerHit);
+function showShowcase(){show("showcase");let n=10;$("showTime").textContent=n;const t=setInterval(()=>{if(current!=="showcase"){clearInterval(t);return}n--;$("showTime").textContent=Math.max(0,n);if(n<=0){clearInterval(t);showResult()}},1000)}
+function resultCopy(v){return v>=3000?"COMFORT CHAMPION!":v>=2200?"GREAT RUN!":v>=1200?"NICE STEP!":"KEEP MOVING!"}
+function showResult(){show("result");$("finalScore").textContent=score.toLocaleString();$("resultMsg").textContent=resultCopy(score);let n=4;$("resultTime").textContent=n;const t=setInterval(()=>{if(current!=="result"){clearInterval(t);return}n--;$("resultTime").textContent=Math.max(0,n);if(n<=0){clearInterval(t);startPhoto()}},1000)}
+function startPhoto(){show("photo");$("photoCanvas").style.display="none";$("photoCount").style.display="grid";let n=3;$("photoCount").textContent=n;const t=setInterval(()=>{if(current!=="photo"){clearInterval(t);return}n--;if(n>0)$("photoCount").textContent=n;else{clearInterval(t);capturePhoto();$("photoCount").textContent="SNAP!";setTimeout(saveAndRank,1100)}},1000)}
+function capturePhoto(){const v=$("photoVideo"),c=$("photoCanvas");if(v.readyState<2)return;c.width=v.videoWidth||1280;c.height=v.videoHeight||720;const x=c.getContext("2d");x.save();x.translate(c.width,0);x.scale(-1,1);x.drawImage(v,0,0,c.width,c.height);x.restore();c.style.display="block";$("photoCount").style.display="none";const t=document.createElement("canvas");t.width=160;t.height=90;t.getContext("2d").drawImage(c,0,0,160,90);currentPhoto=t.toDataURL("image/jpeg",.55)}
+function saveAndRank(){
+  const rows=JSON.parse(localStorage.getItem("smoothStompWebLeaderboard")||"[]");const id=Date.now()+"-"+Math.random().toString(36).slice(2,6);const name="PLAYER "+String(rows.length+1).padStart(3,"0");rows.push({id,name,score,photo:currentPhoto,createdAt:Date.now()});rows.sort((a,b)=>b.score-a.score||a.createdAt-b.createdAt);localStorage.setItem("smoothStompWebLeaderboard",JSON.stringify(rows.slice(0,100)));showRanking(id)
+}
+function showRanking(id){
+  show("ranking");const rows=JSON.parse(localStorage.getItem("smoothStompWebLeaderboard")||"[]");$("rankingScore").textContent=score.toLocaleString();$("rankingRows").innerHTML="";
+  rows.slice(0,10).forEach((r,i)=>{const d=document.createElement("div");d.className="row"+(r.id===id?" you":"");d.innerHTML='<b>#'+(i+1)+'</b>'+(r.photo?'<img class="thumb" src="'+r.photo+'">':'<span class="thumb"></span>')+'<span>'+r.name+(r.id===id?" • YOU":"")+'</span><span class="rscore">'+Number(r.score).toLocaleString()+'</span>';$("rankingRows").appendChild(d)});
+  let n=8;$("rankingTime").textContent=n;const t=setInterval(()=>{if(current!=="ranking"){clearInterval(t);return}n--;$("rankingTime").textContent=Math.max(0,n);if(n<=0){clearInterval(t);show("attract")}},1000)
+}
+function skip(){if(current==="setup"){openCamera();return}if(current==="attract")startReady();else if(current==="ready")startGame();else if(current==="game")showShowcase();else if(current==="showcase")showResult();else if(current==="result")startPhoto();else if(current==="photo")saveAndRank();else if(current==="ranking")show("attract")}
+document.addEventListener("keydown",e=>{if(e.code==="Space"){e.preventDefault();skip()}if(e.key.toLowerCase()==="o")toggleConfig()});
+function syncCfg(){cfg.hitMode=$("hitMode").value;cfg.hitRadius=+$("radius").value;cfg.itemScale=+$("scale").value;cfg.maxActive=+$("active").value;$("radiusOut").textContent=Math.round(cfg.hitRadius*100)+"%";$("scaleOut").textContent=Math.round(cfg.itemScale*100)+"%";$("activeOut").textContent=cfg.maxActive;localStorage.setItem("ss-cfg-web",JSON.stringify(cfg));renderZones()}
+["hitMode","radius","scale","active"].forEach(id=>$(id).addEventListener("input",syncCfg));$("hitMode").value=cfg.hitMode;$("radius").value=cfg.hitRadius;$("scale").value=cfg.itemScale;$("active").value=cfg.maxActive;syncCfg();
+function toggleConfig(force){const open=force!==undefined?force:!$("config").classList.contains("open");$("config").classList.toggle("open",open);$("game").classList.toggle("config-open",open&&current==="game");renderZones()}
+$("openConfigA").onclick=()=>toggleConfig(true);$("openConfigG").onclick=()=>toggleConfig(true);$("closeConfig").onclick=()=>toggleConfig(false);$("config").addEventListener("click",e=>{if(e.target===$("config"))toggleConfig(false)});
+$("resetZones").onclick=()=>{zones=ZDEFAULT.map(z=>({...z}));localStorage.setItem("ss-zones-web",JSON.stringify(zones));renderZones()};
+function renderZones(){
+  document.querySelectorAll(".zone-dot").forEach(x=>x.remove());if(current!=="game"||!$("config").classList.contains("open"))return;
+  zones.forEach((z,i)=>{const d=document.createElement("div");d.className="zone-dot";d.textContent="Z"+(i+1);d.style.left=(z.x*100)+"%";d.style.top=(z.y*100)+"%";d.onpointerdown=e=>{e.preventDefault();d.setPointerCapture(e.pointerId);d.onpointermove=ev=>{const r=$("gameCamera").getBoundingClientRect();z.x=Math.max(.03,Math.min(.97,(ev.clientX-r.left)/r.width));z.y=Math.max(.05,Math.min(.95,(ev.clientY-r.top)/r.height));d.style.left=(z.x*100)+"%";d.style.top=(z.y*100)+"%"};d.onpointerup=()=>{localStorage.setItem("ss-zones-web",JSON.stringify(zones));d.onpointermove=null}};$("gameCamera").appendChild(d)})
+}
+</script>
 </body>
 </html>
