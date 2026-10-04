@@ -1,5 +1,13 @@
 # Changelog
 
+## v1.0.1 — Web Play
+- Added a self-contained web-playable build.
+- Webcam runs directly in the browser over HTTPS.
+- MediaPipe Pose Landmarker is loaded from CDN for half-body / raised-hand start and BODY collision.
+- Includes READY countdown, 40-second gameplay, 6 fixed zones, CONFIG (O), 10-second showcase, result, auto photo, and localStorage ranking.
+- Mouse/touch collision and Spacebar scene skip are available as test fallbacks.
+- Web version saves ranking locally in the current browser.
+
 ## v1.0.0 — GOWALK Interactive Game
 - Initial GitHub version of Smooth Stomp.
 - GOWALK visual theme.
