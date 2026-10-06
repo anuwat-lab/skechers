@@ -1,5 +1,10 @@
 # Changelog
 
+## v1.0.2 — Camera Gate Fix
+- Fixed the setup/camera permission screen staying visible after the game had already advanced.
+- Root cause: the `#setup` CSS forced `display:flex` even after its `active` class was removed.
+- Setup screen now appears only while `#setup.active` is present.
+
 ## v1.0.1 — Web Play
 - Added a self-contained web-playable build.
 - Webcam runs directly in the browser over HTTPS.
